@@ -32,8 +32,8 @@ if tf.__version__.startswith('1.15'):
     tf.enable_eager_execution() # Only if TF is version 1.15
 
 
-path_to_model='my_model.h5'
-path_to_img='000002.jpg'
+path_to_model=Pfad.Path('my_model.h5')
+path_to_img=Pfad.Path('000002.jpg')
 print(tf.version.VERSION)
 
 if path_to_model.isfile():
