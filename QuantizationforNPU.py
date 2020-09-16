@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Sep 10 16:01:22 2020
+Created on Thu Sep 16 14:01:22 2020
 
 @author: base
 
+#--------------------------------
+# If the link to the model should fail , it can be loaded and save with the following:
+import subprocess
+import sys
 
-The model can be loaded with 
+def install(git+https://github.com/rcmalli/keras-vggface.git):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-pip install git+https://github.com/rcmalli/keras-vggface.git
-
-
+from keras_vggface.vggface import VGGFace
+pretrained_model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), pooling='avg')  # pooling: None, avg or max
+#pretrained_model.summary()
+pretrained_model.save("my_model.h5") #using h5 extension
+#-----------------------
 """
 
 
@@ -18,42 +25,34 @@ import tensorflow as tf
 import cv2
 from keras_vggface.utils import preprocess_input
 import numpy as np
-
+import pathlib as Pfad
 print(tf.version.VERSION)
 if tf.__version__.startswith('1.15'):
     # This prevents some errors that otherwise occur when converting the model with TF 1.15...
     tf.enable_eager_execution() # Only if TF is version 1.15
 
-#--------------------------------
-# If I fail to send you the model, it can be loaded and save with the following
-from keras_vggface.vggface import VGGFace
 
-pretrained_model = VGGFace(model='resnet50', include_top=False, input_shape=(224, 224, 3), pooling='avg')  # pooling: None, avg or max
-#pretrained_model.summary()
-pretrained_model.save("my_model.h5") #using h5 extension
-
-#-----------------------
-
-fullint=True
-saved_model_dir='PATH_where you saved the model/'
-modelfile='my_model.h5'
-
-Datentyp='int8'   #'int8' or 'uint8'
-
+path_to_model='my_model.h5'
+path_to_img='000002.jpg'
 print(tf.version.VERSION)
 
-if tf.__version__.startswith('2.'):
-    converter = tf.compat.v1.lite.TFLiteConverter.from_keras_model_file(saved_model_dir + modelfile) #works now also with TF2.x
-if tf.__version__.startswith('1.'):
-    converter = tf.lite.TFLiteConverter.from_keras_model_file(saved_model_dir + modelfile)  
+if path_to_model.isfile():
+    if tf.__version__.startswith('2.'):
+        converter = tf.compat.v1.lite.TFLiteConverter.from_keras_model_file(path_to_model) #works now also with TF2.x
+    if tf.__version__.startswith('1.'):
+        converter = tf.lite.TFLiteConverter.from_keras_model_file(path_to_model)  
+else:
+    print('Please add the my_model.h5 to the working directory, or change the path')
     
 def representative_dataset_gen():
-  for _ in range(10):
-    pfad='Path to a sample image'
-    img=cv2.imread(pfad)
-    img = np.expand_dims(img, axis=0).astype('float32')
-    img = preprocess_input(img, version=2) 
-    yield [img]
+    if path_to_img.isfile():
+      for _ in range(10):
+        img=cv2.imread(path_to_img)
+        img = np.expand_dims(img, axis=0).astype('float32')
+        img = preprocess_input(img, version=2) 
+        yield [img]
+    else:
+        print('Please add the example image or a 224x224 image to the working directory, or change the path')
     
 converter.optimizations = [tf.lite.Optimize.DEFAULT]
 converter.representative_dataset = representative_dataset_gen
