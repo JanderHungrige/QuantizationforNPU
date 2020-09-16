@@ -1,8 +1,11 @@
 # QuantizationforNPU
 We try to quantize a h5 model for the use with the NXP i.mx8 Plus NPU 
 
+The model is the keras-VGGFace model :
+https://github.com/rcmalli/keras-vggface
 
-quantizationforNPU.py loads a saved h5 model and fully quantizes it to int8.
+FILES:
+quantizationforNPU.py loads a saved h5 model and fully quantizes it to int8. The h5 model can be found here :  https://mega.nz/file/ZN8nhYxC#N7iJ8LfACH2N34n3tPkz6a5we6Fog4utIgcHOLx53iQ
 
 The converter.experimental_new_converter = True
 
