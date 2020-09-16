@@ -25,34 +25,34 @@ import tensorflow as tf
 import cv2
 from keras_vggface.utils import preprocess_input
 import numpy as np
-import pathlib as Pfad
+from pathlib import Path
 print(tf.version.VERSION)
 if tf.__version__.startswith('1.15'):
     # This prevents some errors that otherwise occur when converting the model with TF 1.15...
     tf.enable_eager_execution() # Only if TF is version 1.15
 
 
-path_to_model=Pfad.Path('my_model.h5')
-path_to_img=Pfad.Path('000002.jpg')
+path_to_model=Path('my_model.h5')
+path_to_img=Path('000002.jpg')
 print(tf.version.VERSION)
 
-if path_to_model.isfile():
+if path_to_model.is_file():
     if tf.__version__.startswith('2.'):
         converter = tf.compat.v1.lite.TFLiteConverter.from_keras_model_file(path_to_model) #works now also with TF2.x
     if tf.__version__.startswith('1.'):
         converter = tf.lite.TFLiteConverter.from_keras_model_file(path_to_model)  
 else:
-    print('Please add the my_model.h5 to the working directory, or change the path')
+    print('Please add the my_model.h5 to the working directory or change the path')
     
 def representative_dataset_gen():
-    if path_to_img.isfile():
+    if path_to_img.is_file():
       for _ in range(10):
         img=cv2.imread(path_to_img)
         img = np.expand_dims(img, axis=0).astype('float32')
         img = preprocess_input(img, version=2) 
         yield [img]
     else:
-        print('Please add the example image or a 224x224 image to the working directory, or change the path')
+        print('Please add the example image or a 224x224 image to the working directory or change the path')
     
 converter.optimizations = [tf.lite.Optimize.DEFAULT]
 converter.representative_dataset = representative_dataset_gen
